@@ -8,7 +8,7 @@ export default class ImageApiService {
 
   fetchAxios() {
     console.log(this);
-    const url = `https://pixabay.com/api/?key=25737167-0db4b813879a604136ea7d639&q=${this.inputValue}&lang=en&per_page=4&page=${this.page}&
+    const url = `https://pixabay.com/api/?key=25737167-0db4b813879a604136ea7d639&q=${this.inputValue}&lang=en&per_page=40&page=${this.page}&
     image_type="photo&orientation=horizontal&safesearch=true"`;
 
     return axios(url)
