@@ -2,6 +2,7 @@ import '../src/css/styles.css';
 import ImageApiSrvice from './js/api-service';
 import imgCardTpl from './tamplate/img-card.hbs';
 import LoadMoreBtn from './js/components/load-more-btn'
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const refs = {
   searchFormEl: document.querySelector('.search-form'),
@@ -27,6 +28,7 @@ loadMoreBtn.refs.button.addEventListener('click', onFatchData);
 function onSearchFormSubmit(event) {
   event.preventDefault();
   
+
   imageApiService.input = event.currentTarget.elements.searchQuery.value;
   if (!imageApiService.input) {
     clearImgContainer();
@@ -45,6 +47,9 @@ function clearImgContainer() {
 function onFatchData(params) {
   loadMoreBtn.disable()
   imageApiService.fetchAxios().then(data => {
+    if(data.hits.length === 0) {
+      Notify.failure("We're sorry, but you've reached the end of search results.");
+    }
     renderImgCard(data);
     loadMoreBtn.enable()
   })
