@@ -10,7 +10,7 @@ export default class ImageApiService {
 
   async fetchImageFromDb() {
     console.log(this);
-    const url = `${BASE_URL}?key=${KEY}&q=${this.inputValue}&lang=en&per_page=4&page=${this.page}&
+    const url = `${BASE_URL}?key=${KEY}&q=${this.inputValue}&lang=en&per_page=40&page=${this.page}&
     image_type="photo&orientation=horizontal&safesearch=true"`;
     
     try {
