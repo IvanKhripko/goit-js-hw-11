@@ -15,30 +15,47 @@ const refs = getRefs();
 
 refs.searchFormEl.addEventListener('submit', onSearchFormSubmit);
 loadMoreBtn.refs.button.addEventListener('click', onFatchData);
-loadMoreBtn.show();
+
 
 async function onSearchFormSubmit(event) {
   event.preventDefault();
-  
-  imageApiService.input = event.currentTarget.elements.searchQuery.value;
-  if (!imageApiService.input.trim()) {
+
+  imageApiService.input = event.currentTarget.elements.searchQuery.value.trim();
+  event.currentTarget.reset();
+  if (!imageApiService.input) {
     clearGalleryContainer();
-    
     return Notify.failure("Please enter a valid string!")
   }
 
+  loadMoreBtn.show();
   const dataAcquisition = await imageApiService.fetchImageFromDb();
   console.log(dataAcquisition);
 
   if (dataAcquisition.hits.length === 0) {
+    imageApiService.resetPage();
     clearGalleryContainer();
-    return Notify.failure("We're sorry, but you've reached the end of search results.");
+    return Notify.failure("Sorry, there are no images matching your search query. Please try again.");
   } else {
     imageApiService.resetPage();
     clearGalleryContainer();
     renderImgCard(dataAcquisition);
-    loadMoreBtn.enable()
+    loadMoreBtn.enable();
   }
+}
+
+async function onFatchData(data) {
+  loadMoreBtn.disable()
+  imageApiService.decrementPage()
+
+  const additionalData = await imageApiService.fetchImageFromDb()
+  renderImgCard(additionalData);
+  loadMoreBtn.enable()
+  if(additionalData.hits.length === 0 || !imageApiService.input) {
+    loadMoreBtn.hide();
+    imageApiService.resetPage();
+    return Notify.failure("We're sorry, but you've reached the end of search results.")
+  }
+  imageApiService.resetPage();
 }
 
 function renderImgCard(data) {
@@ -49,17 +66,7 @@ function clearGalleryContainer() {
   refs.gallery.innerHTML = '';
 }
 
-async function onFatchData(data) {
-  loadMoreBtn.disable()
-  imageApiService.decrementPage()
 
-  const additionalData = await imageApiService.fetchImageFromDb()
-  renderImgCard(additionalData);
-  loadMoreBtn.enable()
-  if(additionalData.hits.length === 0) {
-    return Notify.failure("Please enter a valid string!")
-  }
-}
 
 
 // const fn = async function() {
